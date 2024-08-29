@@ -25,7 +25,7 @@ export default function FormPersona(props) {
       identificacion: "",
       apellido: "",
       nombre: "",
-      genero: true,
+      genero: "",
       fechaNacimiento: "",
       estrato: 0,
       direccion: "",
@@ -91,7 +91,6 @@ export default function FormPersona(props) {
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries(formData.entries());
     const id = props.selectedRow.id;
-    console.log("Submitting data:", formJson);
 
     const validatePayload = (data) => {
       if (!data.nombre || !data.tipoIdentificacionId || !data.identificacion || !data.direccion) {
@@ -104,21 +103,20 @@ export default function FormPersona(props) {
 
     if (!validatePayload(formJson)) return;
 
-    const url = `${SiteProps.API_URL}/persona`;
+    const url = `${SiteProps.API_URL}/personas`;
 
     if (methodName === "Add") {
       axios.post(url, formJson)
         .then(response => {
           props.setMessage({ open: true, severity: "success", text: "Persona creada con éxito!" });
           setOpen(false);
-          props.reloadData();
+          props.reloadData();  // Aquí es donde se llama a reloadData
         })
         .catch(error => {
           const errorMessage = error.response ? error.response.data.message : error.message;
           props.setMessage({ open: true, severity: "error", text: `Error al crear persona! ${errorMessage}` });
-          console.error("Error al crear persona!", error.response || error.message);
         });
-    } else if (methodName === "Update") {
+    }else if (methodName === "Update") {
       axios.put(`${url}/${id}`, formJson)
         .then(response => {
           props.setMessage({ open: true, severity: "success", text: "Persona actualizada con éxito!" });

@@ -12,7 +12,7 @@ export default function Persona() {
     identificacion: "",
     apellido: "",
     nombre: "",
-    genero: true,
+    genero: "",
     fechaNacimiento: "",
     estrato: 0,
     direccion: "",
@@ -30,7 +30,8 @@ export default function Persona() {
   const [message, setMessage] = React.useState(messageData);
   const [personas, setPersonas] = React.useState([]);
 
-  React.useEffect(() => {
+  // Función para recargar los datos
+  const reloadData = () => {
     axios
       .get(`${SiteProps.API_URL}/personas`)
       .then((response) => {
@@ -39,11 +40,14 @@ export default function Persona() {
           id: item.id,
         }));
         setPersonas(personaData);
-        console.log(personaData);
       })
       .catch((error) => {
         console.error("Error al buscar personas!", error);
       });
+  };
+
+  React.useEffect(() => {
+    reloadData();  // Llama a reloadData para cargar los datos iniciales
   }, []);
 
   return (
@@ -53,6 +57,7 @@ export default function Persona() {
         setMessage={setMessage}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
+        reloadData={reloadData}  // Pasa reloadData como prop a FormPersona
         personas={personas}
       />
       <GridPersona
@@ -63,7 +68,3 @@ export default function Persona() {
     </div>
   );
 }
-
-
-
-
